@@ -468,103 +468,20 @@ class configfileio:
                     f.write(printer)
             
         except:
-            pass  
-            
-    def get_aadvanced_parameters(self):
-        try: 
+            pass
+		
+    def get_parameters(self,request):
+	print "REQ", request
+	try:    
             partialdict = {}
-            with open(config_file)as f:
-                for line in f:
-                    param, value = line.strip().split('=', 1) 
-                    #print param,value
-                    if "advanced_" in param:                     
-                        fun, query=param.split('_',1)
-                        partialdict[query] = value
-                return partialdict
-        except:
-            pass             
-            
-    def save_aadvanced_parameters(self,tosave):
-        try:
-            partialdict={'a':'advanced_a','b':'advanced_b','c':'advanced_c','d':'advanced_d',
-            'e':'advanced_e','f':'advanced_f','g':'advanced_g',}
-            savedict={}
-            for item in partialdict:
-                savedict[partialdict[item]]=tosave[item]
-
-            #union this with savedict and keep overlapping values of saveedict
-            fulldict  = self.get_all_parameters()
-            newdict = dict(fulldict,**savedict)
-            with open(config_file,'w') as f:      
-                for item in newdict:
-                    printer = item+'='+ str(newdict[item]) +'\n'
-                    f.write(printer)
-            
-        except:
-            pass  
-            
-    def get_aadvanced_parameters(self):
-        try: 
-            partialdict = {}
-            with open(config_file)as f:
-                for line in f:
-                    param, value = line.strip().split('=', 1) 
-                    #print param,value
-                    if "advanced_" in param:                     
-                        fun, query=param.split('_',1)
-                        partialdict[query] = value
-                return partialdict
-        except:
-            pass             
-            
-    def save_aadvanced_parameters(self,tosave):
-        try:
-            partialdict={'a':'advanced_a','b':'advanced_b','c':'advanced_c','d':'advanced_d',
-            'e':'advanced_e','f':'advanced_f','g':'advanced_g',}
-            savedict={}
-            for item in partialdict:
-                savedict[partialdict[item]]=tosave[item]
-
-            #union this with savedict and keep overlapping values of saveedict
-            fulldict  = self.get_all_parameters()
-            newdict = dict(fulldict,**savedict)
-            with open(config_file,'w') as f:      
-                for item in newdict:
-                    printer = item+'='+ str(newdict[item]) +'\n'
-                    f.write(printer)
-            
-        except:
-            pass  
-            
-    def get_aadvanced_parameters(self):
-        try: 
-            partialdict = {}
-            with open(config_file)as f:
-                for line in f:
-                    param, value = line.strip().split('=', 1) 
-                    #print param,value
-                    if "advanced_" in param:                     
-                        fun, query=param.split('_',1)
-                        partialdict[query] = value
-                return partialdict
-        except:
-            pass             
-            
-    def save_aadvanced_parameters(self,tosave):
-        try:
-            partialdict={'a':'advanced_a','b':'advanced_b','c':'advanced_c','d':'advanced_d',
-            'e':'advanced_e','f':'advanced_f','g':'advanced_g',}
-            savedict={}
-            for item in partialdict:
-                savedict[partialdict[item]]=tosave[item]
-
-            #union this with savedict and keep overlapping values of saveedict
-            fulldict  = self.get_all_parameters()
-            newdict = dict(fulldict,**savedict)
-            with open(config_file,'w') as f:      
-                for item in newdict:
-                    printer = item+'='+ str(newdict[item]) +'\n'
-                    f.write(printer)
-            
-        except:
-            pass  
+	    with open(config_file)as f:
+		for line in f:
+		    param,value = line.strip().split('=', 1) 
+		    if request in param:
+			print "PARAM",param
+			fun,query = param.split('_',1)
+			print "FUN & Query",fun, query
+			partialdict[query] = value
+		return partialdict
+	except:
+	    pass
