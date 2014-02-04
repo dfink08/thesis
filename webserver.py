@@ -62,7 +62,6 @@ class MyHandler(BaseHTTPRequestHandler):
         
     def do_GET(self):
         
-        
         self.client_address
         configio = configfileio()
         
@@ -87,11 +86,9 @@ class MyHandler(BaseHTTPRequestHandler):
         #print 'Request: '+ self.requestline
         try:
 
-       
             #default page
             if req.path=="/" or req.path=="":
-                
-                
+             
                 f = open(curdir + sep + 'index.html')  
                 template = Template(f.read())
                 main_index = configio.get_all_parameters() 
@@ -99,9 +96,6 @@ class MyHandler(BaseHTTPRequestHandler):
 
                 self.wfile.write('HTTP/1.1 200 OK\r\nContent-type: text/html\r\n\r\n'+ pophtml)
                 self.close_connection = 1   #because http 1.1, not closed automatically       
-                
-                
-
 
                 f.close()
             #favicon 
@@ -160,55 +154,10 @@ class MyHandler(BaseHTTPRequestHandler):
                 if not (("getp2p" or "testsmtp" or "main" or "index" or "peerlink") in req.path): 
                     tempVar = configio.get_parameters(req.path[1:-5])
                     pophtml= template.substitute(dict(global_template,**tempVar))
-                # elif req.path=="/setname.html":
-                    # setname = configio.get_setname_parameters()                           
-                    # pophtml= template.substitute(dict(global_template,**setname))
-                # elif req.path=="/setdesc.html":
-                    # setdesc = configio.get_setdesc_parameters() 
-                    # pophtml= template.substitute(dict(global_template,**setdesc))
-                # elif req.path=="/setip.html":
-                    # setip = configio.get_setip_parameters() 
-                    # pophtml= template.substitute(dict(global_template,**setip))                    
-                # elif req.path=="/setsmtp.html":
-                    # setsmtp = configio.get_setsmtp_parameters() 
-                    # pophtml= template.substitute(dict(global_template,**setsmtp))                    
+                               
                 elif req.path=="/testsmtp.html": 
                     pophtml= template.substitute(global_template)
-                # elif "/getp2p" in req.path:
-                    # setp2p = configio.get_setp2p_parameters()
-                    ##build template replacement dictionary (more complicated than the others)
-                    # offset = int(req.path[7]) * 8
-                    # if int(req.path[7]) !=0:
-                        # offset -= 1 #kludge to get right numbers to show up on template
-
-                    # if req.path[8] == '0':
-                        # offset = 79     #avoid interpreting '10' as '1'
-                    # if (offset > 80) or (offset < 0):
-                        # print'failed!!! offset is '+ offset
-                    
-                    # getp2pdict={}
-                    # for dex1 in range(1, 9):
-                        ##replaces the ${} delimters in the getp2p template
-                        # getp2pdict['d'+ str(dex1)]=str(dex1+offset)
-                        # getp2pdict['i'+ str(dex1)]='i' +str(dex1+offset)
-                        # getp2pdict['r'+ str(dex1)]='r' +str(dex1+offset)
-                        # getp2pdict['u'+ str(dex1)]='u' +str(dex1+offset)  
-                        # getp2pdict['pn'+ str(dex1)]='p' +str(dex1+offset)
-                        ##replaces the data
-                        # getp2pdict['ii'+ str(dex1)]=setp2p['i' +str(dex1+offset)]
-                        # getp2pdict['rr'+ str(dex1)]=setp2p['r' +str(dex1+offset)]
-                        # getp2pdict['uu'+ str(dex1)]=setp2p['u' +str(dex1+offset)]
-                        # getp2pdict['p'+ str(dex1)+'_0']=setp2p['p' +str(dex1+offset)+'_0']
-                        # getp2pdict['p'+ str(dex1)+'_1']=setp2p['p' +str(dex1+offset)+'_1']
-                    
-                    # pophtml= template.substitute(dict(global_template,**getp2pdict))
-                    
-                # elif req.path=="/advanced.html":
-                    # advanced = configio.get_advanced_parameters()
-                    # pophtml= template.substitute(dict(global_template,**advanced))
-                # elif req.path=="/setupsmtp.html":
-                    # setsmtp = configio.get_setsmtp_parameters()
-                    # pophtml= template.substitute(dict(global_template,**setsmtp))
+                
                 elif req.path=="/peerlink.html":
                     peerlink = configio.get_peerlink_parameters()
                     pophtml= template.substitute(dict(global_template,**peerlink))                    
@@ -230,17 +179,13 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.close_connection = 1   #because http 1.1, not closed automatically       
                 #self.wfile.write('<HTML><HEAD><TITLE>${title}</TITLE></HEAD><CENTER>${message}</CENTER><BR><CENTER><B><A HREF=main.html>Return to main setup page.</A></B></CENTER><BR></BODY></HTML>')
                 
-
-
                 f.close()
                 
                 return
+				
             if req.query!= "":        
                 if global_params['submit']=='no':
-                   self.close_connection = 1   #because http 1.1, not closed automatically
-                   self.send_response(200)
-                   self.send_header('Content-type',	'text/html')
-                   self.end_headers()
+                   closeAndSendHeader()
 
                    f = open(curdir + sep +'/complete.html')
                    template = Template(f.read())
@@ -256,10 +201,7 @@ class MyHandler(BaseHTTPRequestHandler):
                     configio.save_setid_parameters(setid)                                        
                     #map(lambda x:x.upper(),[])
                     
-                    self.close_connection = 1   #because http 1.1, not closed automatically                   
-                    self.send_response(200)
-                    self.send_header('Content-type',	'text/html')
-                    self.end_headers()
+                    closeAndSendHeader()
                     self.log_message(" +PARAMS: ID=%s", dict(parse_qsl(req.query))['n'])
                     
                     f = open(curdir + sep +'/complete.html')
@@ -274,10 +216,7 @@ class MyHandler(BaseHTTPRequestHandler):
                     
                     configio.save_setname_parameters(setname)                                        
                                        
-                    self.close_connection = 1   #because http 1.1, not closed automatically                   
-                    self.send_response(200)
-                    self.send_header('Content-type',	'text/html')
-                    self.end_headers()
+                    closeAndSendHeader()
                     self.log_message(" +PARAMS: NAME=%s", dict(parse_qsl(req.query))['n'])
                     
                     
@@ -293,10 +232,7 @@ class MyHandler(BaseHTTPRequestHandler):
                     setdesc['n']= (dict(parse_qsl(req.query))['n'])
                     configio.save_setdesc_parameters(setdesc)                                        
                     
-                    self.close_connection = 1   #because http 1.1, not closed automatically                   
-                    self.send_response(200)
-                    self.send_header('Content-type',	'text/html')
-                    self.end_headers()
+                    closeAndSendHeader()
                     self.log_message(" +PARAMS: DESCRIP=%s", dict(parse_qsl(req.query))['n'])
                     
                     f = open(curdir + sep +'/complete.html')
@@ -334,16 +270,12 @@ class MyHandler(BaseHTTPRequestHandler):
                         global_params['subnet']=socket.inet_ntoa(struct.pack(">L", (1<<32) - (1<<32>>PYNETIFCONF(iface).get_netmask())))
 
                         
-                        
                         #save values to config file
                         global_params['suppliedbydhcp'] = '(Supplied by DHCP)' 
                         configio.save_setip_parameters(setip)                             
                         configio.save_global_parameters(global_params)                              
                         
-                        self.close_connection = 1   #because http 1.1, not closed automatically                   
-                        self.send_response(200)
-                        self.send_header('Content-type',	'text/html')
-                        self.end_headers()
+                        closeAndSendHeader()
                         
                         #special complete message for DHCP
                         f = open(curdir + sep +'/ipcomplete.html')
@@ -370,9 +302,6 @@ class MyHandler(BaseHTTPRequestHandler):
                         
                         #TODO:fix setting IPs:
                         
-                        
-                        
-                        
                         try:
                             PYNETIFCONF(iface).set_ip(setip['i'])
                             PYNETIFCONF(iface).set_netmask(int(get_netmask(setip['i'], setip['s'])))
@@ -389,10 +318,7 @@ class MyHandler(BaseHTTPRequestHandler):
                         configio.save_setip_parameters(setip)                                     
                         self.log_message(" +PARAMS: DHCP=%d IP=%s SUBNET=%s GATEWAY=%s", setip['dhcp'],dict(parse_qsl(req.query))['i'],dict(parse_qsl(req.query))['s'], dict(parse_qsl(req.query))['g'])
                         
-                        self.close_connection = 1   #because http 1.1, not closed automatically                   
-                        self.send_response(200)
-                        self.send_header('Content-type',	'text/html')
-                        self.end_headers()
+                        closeAndSendHeader()
                         f = open(curdir + sep +'/complete.html')
                         template = Template(f.read())
                         pophtml = template.substitute({'title':'Set IP Configuration','message':'Setup IP Configuration complete.'})
@@ -456,11 +382,7 @@ class MyHandler(BaseHTTPRequestHandler):
                     configio.save_global_parameters(global_params)
                     configio.save_setsmtp_parameters(setsmtp)
 
-
-                    self.close_connection = 1   #because http 1.1, not closed automatically                   
-                    self.send_response(200)
-                    self.send_header('Content-type',	'text/html')
-                    self.end_headers()
+                    closeAndSendHeader()
                     self.log_message(" +PARAMS: SVR_IP=%s SENDR_NAME=%s SENDR_ADDR=%s CC=%s PORT=%s TOUT=%s AUTH=%s UN=%s PW=%s", dict(parse_qsl(req.query))['i'],
                     dict(parse_qsl(req.query))['n'],dict(parse_qsl(req.query))['e'],dict(parse_qsl(req.query))['c'],dict(parse_qsl(req.query))['p'],
                     dict(parse_qsl(req.query))['t'],setsmtp['a'],dict(parse_qsl(req.query))['u'],dict(parse_qsl(req.query))['s'])
@@ -476,18 +398,13 @@ class MyHandler(BaseHTTPRequestHandler):
                 #TODO:  implement EMAIL stuff here!!
                 elif req.path=="/testsmtp.html":                                    
                     
-                    
                     if (dict(parse_qsl(req.query))['n'])!= '':
                         test_email_addr= (dict(parse_qsl(req.query))['n'])                                   
                         
                         # logic here to check that settings from setsmtp are correct
                         # logic here to send email
 
-                        
-                        self.close_connection = 1   #because http 1.1, not closed automatically                   
-                        self.send_response(200)
-                        self.send_header('Content-type',	'text/html')
-                        self.end_headers()
+                        closeAndSendHeader())
                         self.log_message(" +PARAMS: EMAILSEND_ADDR=%s", dict(parse_qsl(req.query))['n'])
 
                         f = open(curdir + sep +'/complete.html')
@@ -525,10 +442,8 @@ class MyHandler(BaseHTTPRequestHandler):
                                    
                     configio.save_advanced_parameters(advanced)
                                       
-                    self.close_connection = 1   #because http 1.1, not closed automatically                   
-                    self.send_response(200)
-                    self.send_header('Content-type',	'text/html')
-                    self.end_headers()
+                    closeAndSendHeader()
+					
                     self.log_message(" +PARAMS: ACK_TOUT=%s RESP_TOUT=%s RTRIES=%s KSEQ_RTRIES=%s MODMST_TOUT=%s MODSLV_TOUT=%s FOR_10T=%s WEB_RONLY=%s DIP=%s", 
                      dict(parse_qsl(req.query))['a'],dict(parse_qsl(req.query))['b'],dict(parse_qsl(req.query))['c'],dict(parse_qsl(req.query))['d'],
                      dict(parse_qsl(req.query))['e'],dict(parse_qsl(req.query))['f'],advanced['g'],advanced['h'],advanced['i'])
@@ -552,10 +467,7 @@ class MyHandler(BaseHTTPRequestHandler):
                     
                     configio.save_peerlink_parameters(peerlink)                                        
                     
-                    self.close_connection = 1   #because http 1.1, not closed automatically                   
-                    self.send_response(200)
-                    self.send_header('Content-type',	'text/html')
-                    self.end_headers()
+                    closeAndSendHeader()
            
                     self.log_message(" +PARAMS: VMEM=%s ENAB=%s BK0=%s BK1=%s BK2=%s BK3=%s BK4=%s BK5=%s BK6=%s BK7=%s BK8=%s BK9=%s BK10=%s BK11=%s BK12=%s BK13=%s BK14=%s BK15=%s", 
                     peerlink['a'], peerlink['e'],dict(parse_qsl(req.query))['b0'],dict(parse_qsl(req.query))['b1'],dict(parse_qsl(req.query))['b2'],
@@ -581,10 +493,8 @@ class MyHandler(BaseHTTPRequestHandler):
                     #print 'setp2p[i7] after is',setp2p[i7]    
                     configio.save_setp2p_parameters(setp2p)                                        
                     
-                    self.close_connection = 1   #because http 1.1, not closed automatically                   
-                    self.send_response(200)
-                    self.send_header('Content-type',	'text/html')
-                    self.end_headers()
+                    closeAndSendHeader()
+					
                     self.log_message(" +PARAMS: %s", log_string)
                     
                     f = open(curdir + sep +'/complete.html')
@@ -598,14 +508,7 @@ class MyHandler(BaseHTTPRequestHandler):
                     setid['n']= (dict(parse_qsl(req.query))['n'])
                     configio.save_setid_parameters(setid)                                        
                     
-                    self.close_connection = 1   #because http 1.1, not closed automatically                   
-                    self.send_response(200)
-                    self.send_header('Content-type',	'text/html')
-                    self.end_headers()
-                    
-                    
-                    
-                    
+                    closeAndSendHeader()             
                     
                     f = open(curdir + sep +'/complete.html')
                     template = Template(f.read())
@@ -691,12 +594,11 @@ def main():
         run_ini()
         server = HTTPServer(('', 80), MyHandler)
         print '+++++HTTP Server Started.  Listening on Port 80.'
-        
-           
-
-#        self.log_message("Webserver Started.  Listening on Port 80...")
+      
+		# self.log_message("Webserver Started.  Listening on Port 80...")
 
         server.serve_forever()
+		
     except KeyboardInterrupt:
         print '^C received, shutting down server'
         server.socket.close()
@@ -713,6 +615,11 @@ def get_netmask(ip, sub):
     # return netmask
     return get_net_size(netmask)
 
+def closeAndSendHeader():
+	self.close_connection = 1   #because http 1.1, not closed automatically                   
+	self.send_response(200)
+	self.send_header('Content-type',	'text/html')
+	self.end_headers()
 
 
 if __name__ == '__main__':
