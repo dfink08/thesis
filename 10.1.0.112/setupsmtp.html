@@ -1,0 +1,64 @@
+<HTML><HEAD><TITLE>EMail Setup</TITLE></HEAD>
+<FORM action="setsmtp.html" method="get" onSubmit="return isReady(this)"><P>
+<script language="JavaScript"><!--
+
+function isValidEmail(emailAddress) {
+	var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@(([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    if (emailAddress.length==0) return true;
+
+    return re.test(emailAddress);
+}
+function ValidateEmail(el){
+	if (isValidEmail(el.value) == false){
+        alert("Please enter a valid email address.");
+        el.focus();
+        return false;
+	} else return true;}
+
+function isValidIPAddress(ipaddr) {
+   var re = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
+   if (ipaddr.length==0) return true;
+
+   if (re.test(ipaddr)) {
+      var parts = ipaddr.split(".");
+      for (var i=0; i<parts.length; i++) {
+         if (parseInt(parseFloat(parts[i])) > 255) { return false; }
+      }
+      return true;
+   } else {return false; }}
+function ValidateIPAddress(el) {
+    if (isValidIPAddress(el.value) == false) {
+        alert("Please enter a valid IP Address.");
+        el.focus();
+        return false;
+    } else return true;}
+
+function isValidNumber(string) {
+	return /^((\+|-)\d)?\d*$/.test(string);
+}
+function ValidateNumber(el){
+	if (isValidNumber(el.value) == false){
+        alert("Please enter a valid number.");
+        el.focus();
+        return false;
+	} else return true;}
+
+function isReady(form) 
+{
+if (ValidateIPAddress(form.i) == false) return false;
+if (ValidateEmail(form.e) == false) return false;
+if (ValidateNumber(form.p) == false) return false;
+if (ValidateNumber(form.t) == false) return false;
+return true;
+}
+//--></script>
+<CENTER><TABLE bgColor=#ffffff BORDER=2 width=80%><CAPTION>EMail Setup</CAPTION><TBODY><TR><TD ALIGN="right">Server IP Address:<TD><INPUT type="text" name="i" value="0.0.0.0" maxlength=15 size=15 >
+<TR><TD ALIGN="right">Sender Name:<TD><INPUT type="text" name="n" value="" maxlength=127 size=55 >
+<TR><TD ALIGN="right">Sender EMail Address:<TD><INPUT type="text" name="e" value="" maxlength=127 size=55 >
+<TR><TD ALIGN="right">Cc:<TD><INPUT type="text" name="c" value="" maxlength=127 size=55 >
+<TR><TD ALIGN="right">Port (default=25): <TD><INPUT type="text" name="p" value="0" maxlength=5 size=5 >
+<TR><TD ALIGN="right">Timeout (default=60 sec): <TD><INPUT type="text" name="t" value="0" maxlength=10 size=10 >
+<TR><TD colspan=2><INPUT type="checkbox"  name="a" value="1" >Use Authentication
+<TR><TD ALIGN="right">Username:<TD><INPUT type="text" name="u" value="" maxlength=63 size=55 >
+<TR><TD ALIGN="right">Password:<TD><INPUT type="password" name="s" value="" maxlength=31 size=31 >
+</TBODY></TABLE></CENTER><BR><CENTER><INPUT type="button" value="Back" onclick="history.go(-1)"> <INPUT type="submit" value="Send"> <INPUT type="reset"> </CENTER> </P></FORM></BODY></HTML>

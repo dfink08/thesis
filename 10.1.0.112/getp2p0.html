@@ -1,0 +1,59 @@
+<HTML><HEAD><TITLE>Configure peer to peer settings.</TITLE></HEAD>
+<FORM action="setp2p.html" method="get" onSubmit="return isReady(this)"><P>
+<script language="JavaScript"><!--
+
+function isValidIPAddress(ipaddr) {
+   var re = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
+   if (ipaddr.length==0) return true;
+
+   if (re.test(ipaddr)) {
+      var parts = ipaddr.split(".");
+      for (var i=0; i<parts.length; i++) {
+         if (parseInt(parseFloat(parts[i])) > 255) { return false; }
+      }
+      return true;
+   } else {return false; }}
+function ValidateIPAddress(el) {
+    if (isValidIPAddress(el.value) == false) {
+        alert("Please enter a valid IP Address.");
+        el.focus();
+        return false;
+    } else return true;}
+
+function isValidNumber(string) {
+	return /^((\+|-)\d)?\d*$/.test(string);
+}
+function ValidateNumber(el){
+	if (isValidNumber(el.value) == false){
+        alert("Please enter a valid number.");
+        el.focus();
+        return false;
+	} else return true;}
+
+function isReady(form) 
+{
+if (ValidateIPAddress(form.i1) == false) return false;
+if (ValidateNumber(form.r1) == false) return false;
+if (ValidateIPAddress(form.i2) == false) return false;
+if (ValidateNumber(form.r2) == false) return false;
+if (ValidateIPAddress(form.i3) == false) return false;
+if (ValidateNumber(form.r3) == false) return false;
+if (ValidateIPAddress(form.i4) == false) return false;
+if (ValidateNumber(form.r4) == false) return false;
+if (ValidateIPAddress(form.i5) == false) return false;
+if (ValidateNumber(form.r5) == false) return false;
+if (ValidateIPAddress(form.i6) == false) return false;
+if (ValidateNumber(form.r6) == false) return false;
+if (ValidateIPAddress(form.i7) == false) return false;
+if (ValidateNumber(form.r7) == false) return false;
+return true;
+}
+//--></script>
+<CENTER><TABLE bgColor=#ffffff BORDER=2 width=80%><CAPTION>Peer to peer Configuration</CAPTION><TBODY><TR><TD ALIGN="right">Device 1: <TD><INPUT type="text" name="i1" value="0.0.0.0" maxlength=15 size=15 ><INPUT type="radio" checked name="p1" value="0">ECOM  <INPUT type="radio"  name="p1" value="1">Modbus-TCP  Port: <INPUT type="text" name="r1" value="502" maxlength=5 size=5 >Unit ID: <INPUT type="text" name="u1" value="255" maxlength=5 size=5 >
+<TR><TD ALIGN="right">Device 2: <TD><INPUT type="text" name="i2" value="0.0.0.0" maxlength=15 size=15 ><INPUT type="radio" checked name="p2" value="0">ECOM  <INPUT type="radio"  name="p2" value="1">Modbus-TCP  Port: <INPUT type="text" name="r2" value="502" maxlength=5 size=5 >Unit ID: <INPUT type="text" name="u2" value="255" maxlength=5 size=5 >
+<TR><TD ALIGN="right">Device 3: <TD><INPUT type="text" name="i3" value="0.0.0.0" maxlength=15 size=15 ><INPUT type="radio" checked name="p3" value="0">ECOM  <INPUT type="radio"  name="p3" value="1">Modbus-TCP  Port: <INPUT type="text" name="r3" value="502" maxlength=5 size=5 >Unit ID: <INPUT type="text" name="u3" value="255" maxlength=5 size=5 >
+<TR><TD ALIGN="right">Device 4: <TD><INPUT type="text" name="i4" value="0.0.0.0" maxlength=15 size=15 ><INPUT type="radio" checked name="p4" value="0">ECOM  <INPUT type="radio"  name="p4" value="1">Modbus-TCP  Port: <INPUT type="text" name="r4" value="502" maxlength=5 size=5 >Unit ID: <INPUT type="text" name="u4" value="255" maxlength=5 size=5 >
+<TR><TD ALIGN="right">Device 5: <TD><INPUT type="text" name="i5" value="0.0.0.0" maxlength=15 size=15 ><INPUT type="radio" checked name="p5" value="0">ECOM  <INPUT type="radio"  name="p5" value="1">Modbus-TCP  Port: <INPUT type="text" name="r5" value="502" maxlength=5 size=5 >Unit ID: <INPUT type="text" name="u5" value="255" maxlength=5 size=5 >
+<TR><TD ALIGN="right">Device 6: <TD><INPUT type="text" name="i6" value="0.0.0.0" maxlength=15 size=15 ><INPUT type="radio" checked name="p6" value="0">ECOM  <INPUT type="radio"  name="p6" value="1">Modbus-TCP  Port: <INPUT type="text" name="r6" value="502" maxlength=5 size=5 >Unit ID: <INPUT type="text" name="u6" value="255" maxlength=5 size=5 >
+<TR><TD ALIGN="right">Device 7: <TD><INPUT type="text" name="i7" value="0.0.0.0" maxlength=15 size=15 ><INPUT type="radio" checked name="p7" value="0">ECOM  <INPUT type="radio"  name="p7" value="1">Modbus-TCP  Port: <INPUT type="text" name="r7" value="502" maxlength=5 size=5 >Unit ID: <INPUT type="text" name="u7" value="255" maxlength=5 size=5 >
+</TBODY></TABLE></CENTER><BR><CENTER><INPUT type="button" value="Back" onclick="history.go(-1)"> <INPUT type="submit" value="Send"> <INPUT type="reset"> </CENTER> </P></FORM></BODY></HTML>

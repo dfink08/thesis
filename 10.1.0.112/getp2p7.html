@@ -1,0 +1,62 @@
+<HTML><HEAD><TITLE>Configure peer to peer settings.</TITLE></HEAD>
+<FORM action="setp2p.html" method="get" onSubmit="return isReady(this)"><P>
+<script language="JavaScript"><!--
+
+function isValidIPAddress(ipaddr) {
+   var re = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
+   if (ipaddr.length==0) return true;
+
+   if (re.test(ipaddr)) {
+      var parts = ipaddr.split(".");
+      for (var i=0; i<parts.length; i++) {
+         if (parseInt(parseFloat(parts[i])) > 255) { return false; }
+      }
+      return true;
+   } else {return false; }}
+function ValidateIPAddress(el) {
+    if (isValidIPAddress(el.value) == false) {
+        alert("Please enter a valid IP Address.");
+        el.focus();
+        return false;
+    } else return true;}
+
+function isValidNumber(string) {
+	return /^((\+|-)\d)?\d*$/.test(string);
+}
+function ValidateNumber(el){
+	if (isValidNumber(el.value) == false){
+        alert("Please enter a valid number.");
+        el.focus();
+        return false;
+	} else return true;}
+
+function isReady(form) 
+{
+if (ValidateIPAddress(form.i56) == false) return false;
+if (ValidateNumber(form.r56) == false) return false;
+if (ValidateIPAddress(form.i57) == false) return false;
+if (ValidateNumber(form.r57) == false) return false;
+if (ValidateIPAddress(form.i58) == false) return false;
+if (ValidateNumber(form.r58) == false) return false;
+if (ValidateIPAddress(form.i59) == false) return false;
+if (ValidateNumber(form.r59) == false) return false;
+if (ValidateIPAddress(form.i60) == false) return false;
+if (ValidateNumber(form.r60) == false) return false;
+if (ValidateIPAddress(form.i61) == false) return false;
+if (ValidateNumber(form.r61) == false) return false;
+if (ValidateIPAddress(form.i62) == false) return false;
+if (ValidateNumber(form.r62) == false) return false;
+if (ValidateIPAddress(form.i63) == false) return false;
+if (ValidateNumber(form.r63) == false) return false;
+return true;
+}
+//--></script>
+<CENTER><TABLE bgColor=#ffffff BORDER=2 width=80%><CAPTION>Peer to peer Configuration</CAPTION><TBODY><TR><TD ALIGN="right">Device 56: <TD><INPUT type="text" name="i56" value="0.0.0.0" maxlength=15 size=15 ><INPUT type="radio" checked name="p56" value="0">ECOM  <INPUT type="radio"  name="p56" value="1">Modbus-TCP  Port: <INPUT type="text" name="r56" value="502" maxlength=5 size=5 >Unit ID: <INPUT type="text" name="u56" value="255" maxlength=5 size=5 >
+<TR><TD ALIGN="right">Device 57: <TD><INPUT type="text" name="i57" value="0.0.0.0" maxlength=15 size=15 ><INPUT type="radio" checked name="p57" value="0">ECOM  <INPUT type="radio"  name="p57" value="1">Modbus-TCP  Port: <INPUT type="text" name="r57" value="502" maxlength=5 size=5 >Unit ID: <INPUT type="text" name="u57" value="255" maxlength=5 size=5 >
+<TR><TD ALIGN="right">Device 58: <TD><INPUT type="text" name="i58" value="0.0.0.0" maxlength=15 size=15 ><INPUT type="radio" checked name="p58" value="0">ECOM  <INPUT type="radio"  name="p58" value="1">Modbus-TCP  Port: <INPUT type="text" name="r58" value="502" maxlength=5 size=5 >Unit ID: <INPUT type="text" name="u58" value="255" maxlength=5 size=5 >
+<TR><TD ALIGN="right">Device 59: <TD><INPUT type="text" name="i59" value="0.0.0.0" maxlength=15 size=15 ><INPUT type="radio" checked name="p59" value="0">ECOM  <INPUT type="radio"  name="p59" value="1">Modbus-TCP  Port: <INPUT type="text" name="r59" value="502" maxlength=5 size=5 >Unit ID: <INPUT type="text" name="u59" value="255" maxlength=5 size=5 >
+<TR><TD ALIGN="right">Device 60: <TD><INPUT type="text" name="i60" value="0.0.0.0" maxlength=15 size=15 ><INPUT type="radio" checked name="p60" value="0">ECOM  <INPUT type="radio"  name="p60" value="1">Modbus-TCP  Port: <INPUT type="text" name="r60" value="502" maxlength=5 size=5 >Unit ID: <INPUT type="text" name="u60" value="255" maxlength=5 size=5 >
+<TR><TD ALIGN="right">Device 61: <TD><INPUT type="text" name="i61" value="0.0.0.0" maxlength=15 size=15 ><INPUT type="radio" checked name="p61" value="0">ECOM  <INPUT type="radio"  name="p61" value="1">Modbus-TCP  Port: <INPUT type="text" name="r61" value="502" maxlength=5 size=5 >Unit ID: <INPUT type="text" name="u61" value="255" maxlength=5 size=5 >
+<TR><TD ALIGN="right">Device 62: <TD><INPUT type="text" name="i62" value="0.0.0.0" maxlength=15 size=15 ><INPUT type="radio" checked name="p62" value="0">ECOM  <INPUT type="radio"  name="p62" value="1">Modbus-TCP  Port: <INPUT type="text" name="r62" value="502" maxlength=5 size=5 >Unit ID: <INPUT type="text" name="u62" value="255" maxlength=5 size=5 >
+<TR><TD ALIGN="right">Device 63: <TD><INPUT type="text" name="i63" value="0.0.0.0" maxlength=15 size=15 ><INPUT type="radio" checked name="p63" value="0">ECOM  <INPUT type="radio"  name="p63" value="1">Modbus-TCP  Port: <INPUT type="text" name="r63" value="502" maxlength=5 size=5 >Unit ID: <INPUT type="text" name="u63" value="255" maxlength=5 size=5 >
+</TBODY></TABLE></CENTER><BR><CENTER><INPUT type="button" value="Back" onclick="history.go(-1)"> <INPUT type="submit" value="Send"> <INPUT type="reset"> </CENTER> </P></FORM></BODY></HTML>

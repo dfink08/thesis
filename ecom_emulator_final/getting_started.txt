@@ -1,0 +1,25 @@
+0) eth0 should be pluged into DHCP server, and eth1 into laptop for logging and SSH
+1) Plug in power to gumstix on tobi-duo
+2) make sure you can ping 172.16.1.14, if not, something is wrong with your conneciton to the gumstix
+3) ssh into gumstix ssh root@ 172.16.1.14
+4) first just try to get it running:
+		 ./ecom_emulator_final/start_emulator.sh
+
+   if that fails, try these:
+4) Change MAC address in configure_emulator.sh
+5) Change HPID in firewall.h, HAP_emulator.h ,modbus.py, webserver.py
+6) Change interface in HAP_emualator.h ,modbus.py, webserver.py
+
+
+
+#Troubleshooting:
+1) if everything should be working but it is not, check to see if the MAC addresses are different between the two computers, the emulator changes the MAC to a default number, and if the emulator is started on the laptop and the Gumstix without changing the config file, the MACs will be the same!
+2) lots of debugging options are available by setting the #define macros from 0 to 1 in HAP_emulator.h
+3) if things aren't working from the start, or you are getting strange default values parsing files, suspect these paths, they are relative to where the progam is started from!
+4) gumstix DHCP connection is supposed to default to 172.16.1.9 if no dhcp server is available, but this doesn't always work, when in doubt, plug eth0 into DHCP server
+5) seems like the SSH does not like the USB/Ethernet jack, so SSH right from the build-in ethernet port
+6) all else fails: robert.m.jaromin@gmail.com (no promises)
+
+good luck!
+rmj
+

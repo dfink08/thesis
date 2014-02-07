@@ -1,0 +1,27 @@
+<HTML><HEAD><TITLE>ECOM Advanced Settings</TITLE></HEAD>
+<FORM action="advanced.html" method="get" onSubmit="return isReady(this)"><P>
+<script language="JavaScript"><!--
+
+function isValidNumber(string) {
+	return /^((\+|-)\d)?\d*$/.test(string);
+}
+function ValidateNumber(el){
+	if (isValidNumber(el.value) == false){
+        alert("Please enter a valid number.");
+        el.focus();
+        return false;
+	} else return true;}
+
+function isReady(form) 
+{
+if (ValidateNumber(form.n) == false) return false;
+return true;
+}
+//--></script>
+<CENTER><TABLE bgColor=#ffffff BORDER=2 width=80%><CAPTION>ECOM Advanced Settings</CAPTION><TBODY><TR><TD ALIGN="right">RX/WX ACK Timeout (ms): <TD><INPUT type="text" name="a" value="10" maxlength=5 size=5 >
+<TR><TD ALIGN="right">RX/WX Response Timeout (ms): <TD><INPUT type="text" name="b" value="250" maxlength=5 size=5 >
+<TR><TD ALIGN="right">RX/WX Retries: <TD><INPUT type="text" name="c" value="1" maxlength=5 size=5 >
+<TR><TD ALIGN="right">KSequence Retries: <TD><INPUT type="text" name="d" value="2" maxlength=5 size=5 >
+<TR><TD ALIGN="right">Modbus Master Timeout (ms): <TD><INPUT type="text" name="e" value="1000" maxlength=5 size=5 >
+<TR><TD ALIGN="right">Modbus Slave Timeout (sec): <TD><INPUT type="text" name="f" value="20" maxlength=10 size=10 >
+</TBODY></TABLE></CENTER><BR><CENTER><INPUT type="button" value="Back" onclick="history.go(-1)"> <INPUT type="submit" value="Send"> <INPUT type="reset"> </CENTER> </P></FORM></BODY></HTML>

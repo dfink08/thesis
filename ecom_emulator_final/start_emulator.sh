@@ -1,0 +1,24 @@
+#!/bin/bash
+
+#stop emulator if currently running
+sudo ./stop_emulator.sh
+
+#startup script
+sudo make -C ./nfqueue/
+sudo ./configure_emulator.sh
+sudo ./nfqueue/iptables_rules.sh
+echo "+++++iptables rules changed."
+sudo make -C ./ecom_emulator/
+sudo ./ecom_emulator/ecom_svr.o 0 "dst port 28784"&
+sudo python ./ecom_emulator/output_simulator.py&
+sudo python ./modbus/modbus.py&
+sudo ./nfqueue/infilter.o&
+sudo ./nfqueue/outfilter.o&
+sudo ./nfqueue/logging.o&
+
+cd ./web_server/
+sudo python ./webserver.py&
+
+
+
+

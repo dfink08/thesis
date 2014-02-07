@@ -1,0 +1,24 @@
+<HTML><HEAD><TITLE>Send Test EMail</TITLE></HEAD>
+<FORM action="testsmtp.html" method="get" onSubmit="return isReady(this)"><P>
+<script language="JavaScript"><!--
+
+function isValidEmail(emailAddress) {
+	var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@(([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$$/
+    if (emailAddress.length==0) return true;
+
+    return re.test(emailAddress);
+}
+function ValidateEmail(el){
+	if (isValidEmail(el.value) == false){
+        alert("Please enter a valid email address.");
+        el.focus();
+        return false;
+	} else return true;}
+
+function isReady(form) 
+{
+if (ValidateEmail(form.n) == false) return false;
+return true;
+}
+//--></script>
+<CENTER>Send To: <INPUT type=text name="n" value="" maxlength=255 size=40 ></CENTER><BR><CENTER><INPUT type="button" value="Back" onclick="history.go(-1)"> ${submit_btn} <INPUT type="reset"> </CENTER> </P></FORM></BODY></HTML>

@@ -1,0 +1,21 @@
+<HTML><HEAD><TITLE>Get Module ID</TITLE></HEAD>
+<FORM action="setid.html" method="get" onSubmit="return isReady(this)"><P>
+<script language="JavaScript"><!--
+
+function isValidNumber(string) {
+	return /^((\+|-)\d)?\d*$/.test(string);
+}
+function ValidateNumber(el){
+	if (isValidNumber(el.value) == false){
+        alert("Please enter a valid number.");
+        el.focus();
+        return false;
+	} else return true;}
+
+function isReady(form) 
+{
+if (ValidateNumber(form.n) == false) return false;
+return true;
+}
+//--></script>
+<CENTER>Module ID: <INPUT type=text name="n" value="0" maxlength=16 size=16 ></CENTER><BR><CENTER><INPUT type="button" value="Back" onclick="history.go(-1)"> <INPUT type="submit" value="Send"> <INPUT type="reset"> </CENTER> </P></FORM></BODY></HTML>

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+sudo killall python
+sudo killall infilterall.o
+sudo killall outfilter80.o
+sudo killall filterlibpcap
+echo "emulator stopped."
+
+sudo iptables -F
+sudo iptables -t mangle -F
+echo "iptables rules flushed."
+sudo iptables -L -v
+
+

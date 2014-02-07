@@ -1,0 +1,18 @@
+#get a shell to gumstix
+ssh root@172.16.1.14
+
+#send file to gumstix
+scp ./file_to_send.tar.gz  root@172.16.1.10:/home/root/new_name.tar.gz
+
+#get file from gumstix
+scp root@172.16.1.10:/home/root/file_to_get.tar.gz	 ./new_name.tar.gz       
+
+#start emulator
+./start_emulator.sh
+
+#stop emualtor
+./stop_emulator.sh
+
+
+
+

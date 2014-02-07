@@ -1,0 +1,49 @@
+<HTML><HEAD><TITLE>Peerlink Settings</TITLE></HEAD>
+<FORM action="peerlink.html" method="get" onSubmit="return isReady(this)"><P>
+<script language="JavaScript"><!__
+
+function oncheck(event,no){
+var kc;
+if(window.event){kc=event.keyCode;}
+else{kc=event.which;}
+var num=no.value;
+if (kc!=8 && kc!=0){
+if (kc<48 || kc>55){
+return false;}}}
+//__></script>
+
+<script language="JavaScript"><!__
+
+function ValidateOctalx100(el){
+	if ((parseInt(el.value,8)%64) > 0){
+        alert("V Memory Address must be on 100 (Octal) word boundary.");
+        el.focus();
+        return false;
+	} else return true;}
+
+function isReady(form) 
+{
+if (ValidateOctalx100(form.a) == false) return false;
+return true;
+}
+//__></script>
+<CENTER><TABLE bgColor=#ffffff BORDER=2 width=80%><CAPTION>Peerlink Settings</CAPTION><TBODY>
+<TR><TD ALIGN="right" WIDTH="50%">V Memory Address (octal):<TD><INPUT type="text" name="a" id="oct" onkeypress="return oncheck(event,oct)" value="${a}" maxlength=7 size=7 >
+<TR><TD colspan=2><P ALIGN=CENTER><INPUT type="checkbox" ${e} name="e" value="1" >Peerlink Enabled
+<TR><TD ALIGN=right>Block Number 0<TD><INPUT type="radio" ${b0_0} name="b0" value="0">Ignore  <INPUT type="radio" ${b0_1} name="b0" value="1">Publish  <INPUT type="radio" ${b0_2} name="b0" value="2">Subscribe  
+<TR><TD ALIGN=right>Block Number 1<TD><INPUT type="radio" ${b1_0} name="b1" value="0">Ignore  <INPUT type="radio" ${b1_1} name="b1" value="1">Publish  <INPUT type="radio" ${b1_2} name="b1" value="2">Subscribe  
+<TR><TD ALIGN=right>Block Number 2<TD><INPUT type="radio" ${b2_0} name="b2" value="0">Ignore  <INPUT type="radio" ${b2_1} name="b2" value="1">Publish  <INPUT type="radio" ${b2_2} name="b2" value="2">Subscribe  
+<TR><TD ALIGN=right>Block Number 3<TD><INPUT type="radio" ${b3_0} name="b3" value="0">Ignore  <INPUT type="radio" ${b3_1} name="b3" value="1">Publish  <INPUT type="radio" ${b3_2} name="b3" value="2">Subscribe  
+<TR><TD ALIGN=right>Block Number 4<TD><INPUT type="radio" ${b4_0} name="b4" value="0">Ignore  <INPUT type="radio" ${b4_1} name="b4" value="1">Publish  <INPUT type="radio" ${b4_2} name="b4" value="2">Subscribe  
+<TR><TD ALIGN=right>Block Number 5<TD><INPUT type="radio" ${b5_0} name="b5" value="0">Ignore  <INPUT type="radio" ${b5_1} name="b5" value="1">Publish  <INPUT type="radio" ${b5_2} name="b5" value="2">Subscribe  
+<TR><TD ALIGN=right>Block Number 6<TD><INPUT type="radio" ${b6_0} name="b6" value="0">Ignore  <INPUT type="radio" ${b6_1} name="b6" value="1">Publish  <INPUT type="radio" ${b6_2} name="b6" value="2">Subscribe  
+<TR><TD ALIGN=right>Block Number 7<TD><INPUT type="radio" ${b7_0} name="b7" value="0">Ignore  <INPUT type="radio" ${b7_1} name="b7" value="1">Publish  <INPUT type="radio" ${b7_2} name="b7" value="2">Subscribe  
+<TR><TD ALIGN=right>Block Number 8<TD><INPUT type="radio" ${b8_0} name="b8" value="0">Ignore  <INPUT type="radio" ${b8_1} name="b8" value="1">Publish  <INPUT type="radio" ${b8_2} name="b8" value="2">Subscribe  
+<TR><TD ALIGN=right>Block Number 9<TD><INPUT type="radio" ${b9_0} name="b9" value="0">Ignore  <INPUT type="radio" ${b9_1} name="b9" value="1">Publish  <INPUT type="radio" ${b9_2} name="b9" value="2">Subscribe  
+<TR><TD ALIGN=right>Block Number 10<TD><INPUT type="radio" ${b10_0} name="b10" value="0">Ignore  <INPUT type="radio" ${b10_1} name="b10" value="1">Publish  <INPUT type="radio" ${b10_2} name="b10" value="2">Subscribe  
+<TR><TD ALIGN=right>Block Number 11<TD><INPUT type="radio" ${b11_0} name="b11" value="0">Ignore  <INPUT type="radio" ${b10_1} name="b11" value="1">Publish  <INPUT type="radio" ${b11_2} name="b11" value="2">Subscribe  
+<TR><TD ALIGN=right>Block Number 12<TD><INPUT type="radio" ${b12_0} name="b12" value="0">Ignore  <INPUT type="radio" ${b12_1} name="b12" value="1">Publish  <INPUT type="radio" ${b12_2} name="b12" value="2">Subscribe  
+<TR><TD ALIGN=right>Block Number 13<TD><INPUT type="radio" ${b13_0} name="b13" value="0">Ignore  <INPUT type="radio" ${b13_1} name="b13" value="1">Publish  <INPUT type="radio" ${b13_2} name="b13" value="2">Subscribe  
+<TR><TD ALIGN=right>Block Number 14<TD><INPUT type="radio" ${b14_0} name="b14" value="0">Ignore  <INPUT type="radio" ${b14_1} name="b14" value="1">Publish  <INPUT type="radio" ${b14_2} name="b14" value="2">Subscribe  
+<TR><TD ALIGN=right>Block Number 15<TD><INPUT type="radio" ${b15_0} name="b15" value="0">Ignore  <INPUT type="radio" ${b15_1} name="b15" value="1">Publish  <INPUT type="radio" ${b15_2} name="b15" value="2">Subscribe  
+</TBODY></TABLE></CENTER><BR><CENTER><INPUT type="button" value="Back" onclick="history.go(-1)"> ${submit_btn} <INPUT type="reset"> </CENTER> </P></FORM></BODY></HTML>

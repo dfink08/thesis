@@ -1,0 +1,2 @@
+global_ip=10.1.0.158
+global_subnet=255.255.248.0

@@ -1,0 +1,156 @@
+//gcc -Wall -o logging.o logging.c checksum.c -lnfnetlink  -lnetfilter_queue 
+#include "firewall.h"
+#include <syslog.h>
+#include <arpa/inet.h>
+
+struct nfq_handle *h;
+struct nfq_q_handle *qh;
+int global_UDP_cntr = 0;
+
+static int cb(struct nfq_q_handle *qh, struct nfgenmsg *nfmsg, struct nfq_data *nfa, void *data)
+{
+    u_int32_t id;
+
+		
+    int ret = 0;
+    
+    struct ip *ip;
+    ip = malloc(sizeof(struct ip));
+
+    //match incoming packet to an IP struct
+    id = ntohl((nfq_get_msg_packet_hdr(nfa))->packet_id);
+    nfq_get_payload(nfa, (u_char **)&ip);
+    
+    char raw_bytes[4096];
+    char str[INET_ADDRSTRLEN];
+    memset(raw_bytes,0,4096);
+    u_int len_tol = ntohs(ip->ip_len);	//
+    hex_encode((u_char*)raw_bytes, (u_char*)ip,len_tol-1);
+    struct sockaddr_in sin;
+    
+    sin.sin_family = AF_INET;
+    sin.sin_addr = ip->ip_src;
+    inet_ntop(AF_INET, &(sin.sin_addr), str, INET_ADDRSTRLEN);
+    
+    syslog (LOG_INFO, "ID(%d) IPSRC:(%s) PKT BYTES(%s)", HPID, str , raw_bytes);
+    
+    //NF_REPEAT injects the packet back into the list of iptables rules (starting at the top, I think), and the 0x2 sets the mark that is checked by iptables.  Since 0x2 is marked, we wont enter this queue again for the same packet
+    nfq_set_verdict2(qh, id, NF_REPEAT, 0x2, (uint32_t)ntohs(ip->ip_len), (unsigned char *)ip);
+
+
+    return ret;
+
+}
+int main(int argc, char **argv)
+{
+
+    struct nfnl_handle;
+    int fd;
+    int rv;
+    char buf[4096] __attribute__ ((aligned));
+
+	struct response_dict* resp_dict_ptr;	
+	resp_dict_ptr= malloc( sizeof(struct response_dict));
+
+	//ini_responses(resp_dict_ptr);
+
+	// Set up signal handler
+	signal(SIGINT,graceful_exit);
+	signal(SIGHUP,graceful_exit);
+	
+	
+    printf("\n+++++Starting logging.o now.");
+
+
+    openlog ("HP", LOG_CONS, LOG_LOCAL0);
+
+
+    h = nfq_open();
+    if (!h) {
+            fprintf(stderr, "error during nfq_open()\n");
+	    perror("");
+    }
+
+    if (nfq_unbind_pf(h, AF_INET) < 0) {
+            fprintf(stderr, "error during nfq_unbind_pf()\n");
+	    perror("");
+            //exit(1);            
+    }
+
+    if (nfq_bind_pf(h, AF_INET) < 0) {
+            fprintf(stderr, "logging.o: error during nfq_bind_pf()\n");
+	    perror("");
+            //exit(1);
+    }
+
+    qh = nfq_create_queue(h,  3, &cb, resp_dict_ptr);							///set queue number here
+    if (!qh) {
+            fprintf(stderr, "error during nfq_create_queue()\n");
+            exit(1);
+    }
+
+    if (nfq_set_mode(qh, NFQNL_COPY_PACKET, 0xffff) < 0) {
+            fprintf(stderr, "can't set packet_copy mode\n");
+            exit(1);
+    }
+
+    fd = nfq_fd(h);
+printf("  Port 80 output mangling started.\n");
+
+
+    while (1) {
+	    rv = recv(fd, buf, sizeof(buf), 0);
+            nfq_handle_packet(h, buf, rv);
+    }
+
+printf("logging: done!");
+
+
+    exit(0);
+}
+
+void graceful_exit () {
+//======================================================================
+// Called by a SIGHUP or SIGINT, unbind the queue and exit
+//======================================================================
+
+	printf ("Signal caught, destroying queue ...");
+	nfq_destroy_queue(qh);
+	printf ("Closing handle \n");
+	nfq_close(h);
+	exit(0);
+}
+
+
+static char hextab[512] = "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff";
+
+void hex_encode(u_char* output, u_char* input, int input_len)
+{
+	u_int16_t i;
+	for(i = 0; i<input_len; i++)
+	{	
+		output[i*2] = hextab[input[i]*2];
+		output[(i*2)+1] = hextab[(input[i]*2)+1];
+		//printf("%c%c", hextab[input[i]*2], hextab[(input[i]*2)+1]);
+	}
+	//printf("\n");
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

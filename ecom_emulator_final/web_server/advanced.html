@@ -1,0 +1,35 @@
+<HTML><HEAD><TITLE>ECOM Advanced Settings</TITLE></HEAD>
+<FORM action="advanced.html" method="get" onSubmit="return isReady(this)"><P>
+<script language="JavaScript"><!--
+
+function isValidNumber(string) {
+	return /^((\+|-)\d)?\d*${dollarsign}/.test(string);
+}
+function ValidateNumber(el){
+	if (isValidNumber(el.value) == false){
+        alert("Please enter a valid number.");
+        el.focus();
+        return false;
+	} else return true;}
+
+function isReady(form) 
+{
+if (ValidateNumber(form.a) == false) return false;
+if (ValidateNumber(form.b) == false) return false;
+if (ValidateNumber(form.c) == false) return false;
+if (ValidateNumber(form.d) == false) return false;
+if (ValidateNumber(form.e) == false) return false;
+if (ValidateNumber(form.f) == false) return false;
+return true;
+}
+//--></script>
+<CENTER><TABLE bgColor=#ffffff BORDER=2 width=80%><CAPTION>ECOM Advanced Settings</CAPTION><TBODY><TR><TD ALIGN="right">RX/WX ACK Timeout (ms): <TD><INPUT type="text" name="a" value="${a}" maxlength=5 size=5 >
+<TR><TD ALIGN="right">RX/WX Response Timeout (ms): <TD><INPUT type="text" name="b" value="${b}" maxlength=5 size=5 >
+<TR><TD ALIGN="right">RX/WX Retries: <TD><INPUT type="text" name="c" value="${c}" maxlength=5 size=5 >
+<TR><TD ALIGN="right">KSequence Retries: <TD><INPUT type="text" name="d" value="${d}" maxlength=5 size=5 >
+<TR><TD ALIGN="right">Modbus Master Timeout (ms): <TD><INPUT type="text" name="e" value="${e}" maxlength=5 size=5 >
+<TR><TD ALIGN="right">Modbus Slave Timeout (sec): <TD><INPUT type="text" name="f" value="${f}" maxlength=10 size=10 >
+<TR><TD colspan=2><P ALIGN=CENTER><INPUT type="checkbox" ${g} name="g" value="1" >Force 10BaseT (Requires Reboot)
+<TR><TD colspan=2><P ALIGN=CENTER><INPUT type="checkbox" ${h} name="h" value="1" ${readonly_web_checkmark}>Read Only Web Config (Requires NetEdit to turn off)
+<TR><TD colspan=2><P ALIGN=CENTER><INPUT type="checkbox" ${i} name="i" value="1" >Dip Switch 5 locks device for updates
+</TBODY></TABLE></CENTER><BR><CENTER><INPUT type="button" value="Back" onclick="history.go(-1)"> ${submit_btn} <INPUT type="reset"> </CENTER> </P></FORM></BODY></HTML>
