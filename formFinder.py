@@ -10,6 +10,7 @@ pathName = input("Path of the html files: ")
 
 configDict = pathName+"/configDict.txt"
 configDictfile = open(configDict,"w")
+dictionary = {}
 
 # os.walk will walk the entire directory of files and create a generator object that can be iterated
 for root, dirs, files in os.walk(pathName):
@@ -27,7 +28,9 @@ for root, dirs, files in os.walk(pathName):
       htmlFile = open(filePath, 'r')
       fileText = htmlFile.read()
       
-      print "FILE Path: " + filePath
+      newFileText = fileText
+      
+      #print "FILE Path: " + filePath
       inputStart = fileText.find("<input")
       if inputStart == -1:
 	inputStart = fileText.find("<INPUT") #This is really ugly, find a more elegant solution.
@@ -40,6 +43,7 @@ for root, dirs, files in os.walk(pathName):
 	inputEnd = fileText[inputStart:].find(">")+inputStart+1
 	
 	inputSection = fileText[inputStart:inputEnd] 	
+	newInputSection = inputSection
 	
 	#Look for the instance of "name" or "id" in the form section
 	# This is the label for a changeable field
@@ -67,8 +71,13 @@ for root, dirs, files in os.walk(pathName):
 	
 	value = inputSection[valueS:valueE]
 	
+	newInputSection = newInputSection.replace(inputSection[valueS:valueE],fileName[:-5]+"_"+name)
+	#print "New input" , newInputSection
+	newFileText = newFileText.replace(fileText[inputStart:inputEnd],newInputSection)
+	
 	configDictfile.write(value+"\n")
-      
+	dictionary[name] = value
+	
 	inputSection = inputSection[valueE:]
 	
 	# After finding all of the variable fields, look for any more form sections that
@@ -76,9 +85,12 @@ for root, dirs, files in os.walk(pathName):
 	fileText = fileText[inputEnd:]
 	inputStart = fileText.find("<input")
 	if inputStart == -1:
-	  inputStart = fileText.find("<INPUT") #This is really ugly, find a more elegant solution.
-                
-
+	  inputStart = fileText.find("<INPUT") #This is really ugly, find a more elegant solution.      
+      #print newFileText 
+      htmlFile.seek(0,0)
+      htmlFile.write(newFileText)
+      htmlFile.close()
+#print dictionary
 configDictfile.close()
         
 #TODO: This code currently makes a lot of assumptions about how each html file will be formatted.
