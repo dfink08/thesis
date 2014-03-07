@@ -1,7 +1,6 @@
 import sys
 import os
 
-
 import string,cgi,time 
 from os import curdir, sep
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
@@ -10,18 +9,14 @@ from urlparse import urlparse, parse_qs, parse_qsl
 from string import Template,upper
 import re
 import urllib 
+from inputFinder import dictionary
 
 base_dir = os.path.dirname(__file__) or '.'
 config_file = os.path.join(base_dir, '../config.txt')
 config_file = os.path.normpath(config_file)
 
 
-
-
-
-class configfileio:
-    
-    
+class configfileio: 
     
     def get_all_parameters(self):
         try:    
@@ -30,25 +25,10 @@ class configfileio:
                 for line in f:
                     param, value = line.strip().split('=', 1)                                                                                                                                
                     fulldict[param] = value
-                    #print 'fulldict1: ',param,fulldict[param]
-                #print 'fulldict2: ',fulldict['setid_n']
                 return fulldict
         except:
             pass
             
-    def get_setid_parameters(self):
-        try:    
-            partialdict = {}
-            with open(config_file)as f:
-                for line in f:
-                    param, value = line.strip().split('=', 1) 
-                    #print param,value
-                    if "setid_" in param:                   
-                        fun, query=param.split('_',1)
-                        partialdict[query] = value
-                return partialdict
-        except:
-            pass
 
     def save_setid_parameters(self,tosave):
         try:
@@ -68,23 +48,7 @@ class configfileio:
         except:
             print'save setid broken!'
             pass
-            
-              
-    def get_setname_parameters(self):
-        try: 
-            partialdict = {}
-            with open(config_file)as f:
-                for line in f:
-                    param, value = line.strip().split('=', 1) 
-                    #print param,value
-                    if "setname_" in param:            
-                        fun, query=param.split('_',1)
-                        #unquote_plus removes + signs from url encoding
-                        partialdict[query] = value
-                return partialdict
-        except:
-            print'get setname broken!'
-            pass             
+                    
             
     def save_setname_parameters(self,tosave):
         try:    
@@ -104,27 +68,6 @@ class configfileio:
             print'save setname broken!'
             pass
              
-    def get_global_parameters(self):
-        try: 
-            partialdict = {}
-            with open(config_file)as f:
-                for line in f:
-                    param, value = line.strip().split('=',1) 
-                    #print param,value
-                    if "global_" in param: 
-                        #print'found global'                    
-                        fun, query=param.split('_',1)
-                        partialdict[query] = value
-                        
-               #print 'about to return'
-               #print 'after get globals partial dict', partialdict
-                return partialdict
-                
-        except:
-            print'get globals broken!'
-            pass            
-
-
             
     def save_global_parameters(self,tosave):
         try:
@@ -161,21 +104,7 @@ class configfileio:
         except:
             print'saving globals broken!'             
             raise 
-            
-            
-    def get_advanced_parameters(self):
-        try: 
-            partialdict = {}
-            with open(config_file)as f:
-                for line in f:
-                    param, value = line.strip().split('=', 1) 
-                    #print param,value
-                    if "advanced_" in param:                     
-                        fun, query=param.split('_',1)
-                        partialdict[query] = value
-                return partialdict
-        except:
-            pass             
+                     
             
     def save_advanced_parameters(self,tosave):
         try:
@@ -245,21 +174,6 @@ class configfileio:
             
         except:
             pass  
-            
-    def get_setdesc_parameters(self):
-        try: 
-            partialdict = {}
-            with open(config_file)as f:
-                for line in f:
-                    param, value = line.strip().split('=', 1) 
-                    #print param,value
-                    if "setdesc_" in param:                   
-                        fun, query=param.split('_',1)
-                        partialdict[query] = value
-                return partialdict
-        except:
-            print'broken get_setdesc'
-            pass             
             
     def save_setdesc_parameters(self,tosave):
         try:
@@ -367,21 +281,7 @@ class configfileio:
             
         except:
             print'save setp2p broken!'
-            pass  
-            
-    def get_setip_parameters(self):
-        try: 
-            partialdict = {}
-            with open(config_file)as f:
-                for line in f:
-                    param, value = line.strip().split('=', 1) 
-                    #print param,value
-                    if "setip_" in param:                     
-                        fun, query=param.split('_',1)
-                        partialdict[query] = value
-                return partialdict
-        except:
-            pass             
+            pass              
             
     def save_setip_parameters(self,tosave):
         try:
@@ -401,21 +301,7 @@ class configfileio:
             
         except:
             print'setip save broken'
-            pass  
-            
-    def get_setsmtp_parameters(self):
-        try: 
-            partialdict = {}
-            with open(config_file)as f:
-                for line in f:
-                    param, value = line.strip().split('=', 1) 
-                    #print param,value
-                    if "setsmtp_" in param:                     
-                        fun, query=param.split('_',1)
-                        partialdict[query] = value
-                return partialdict
-        except:
-            pass             
+            pass              
             
     def save_setsmtp_parameters(self,tosave):
         try:
@@ -436,20 +322,7 @@ class configfileio:
         except:
             print'save setsmtp is broken!'
             pass  
-            
-    def get_aadvanced_parameters(self):
-        try: 
-            partialdict = {}
-            with open(config_file)as f:
-                for line in f:
-                    param, value = line.strip().split('=', 1) 
-                    #print param,value
-                    if "advanced_" in param:                     
-                        fun, query=param.split('_',1)
-                        partialdict[query] = value
-                return partialdict
-        except:
-            pass             
+                   
             
     def save_aadvanced_parameters(self,tosave):
         try:
@@ -471,17 +344,56 @@ class configfileio:
             pass
 		
     def get_parameters(self,request):
-	print "REQ", request
+	#print "REQ", request
 	try:    
             partialdict = {}
 	    with open(config_file)as f:
 		for line in f:
 		    param,value = line.strip().split('=', 1) 
 		    if request in param:
-			print "PARAM",param
+			#print "PARAM",param
 			fun,query = param.split('_',1)
-			print "FUN & Query",fun, query
-			partialdict[query] = value
-		return partialdict
+			#print "FUN & Query",fun, query
+			partialdict[param] = value
+	    #print "Dictionary: ",dictionary
+	    #for item in dictionary:
+		#print "Item: ",item
+		#if request in item:
+				
+			#fun,query = item.split('_',1)
+			#print "FUN & Query",fun, query
+			#partialdict[query] = dictionary[item]
+	    #print "Partial dict: ", partialdict
+	    return partialdict
+		#return dictionary
+		
 	except:
-	    pass
+	    pass		
+	# try:    
+            # fulldict = {}
+            # with open(config_file)as f:
+                # for line in f:
+		  
+                    # param, value = line.strip().split('=', 1)
+                    # if request in param:
+		      # fulldict[param] = value
+            # return fulldict
+        # except:
+            # pass 
+			
+    def save_parameters(self, toSave):
+	try: 
+	    
+	    savedict = toSave
+	    
+	    fulldict  = self.get_all_parameters()
+            newdict = dict(fulldict,**savedict)
+            with open(config_file,'w') as f:      
+                for item in newdict:
+                    printer = item+'='+ (str(newdict[item])) +'\n'
+                    #print "Item to save: ", item
+		    dictionary[item]=newdict[item]
+                    f.write(printer)
+        except:
+            print'save setname broken!'
+            pass 
