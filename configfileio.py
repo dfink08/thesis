@@ -1,5 +1,6 @@
 import sys
 import os
+import inspect
 
 import string,cgi,time 
 from os import curdir, sep
@@ -9,12 +10,16 @@ from urlparse import urlparse, parse_qs, parse_qsl
 from string import Template,upper
 import re
 import urllib 
-from inputFinder import dictionary
+
 
 base_dir = os.path.dirname(__file__) or '.'
 config_file = os.path.join(base_dir, '../config.txt')
 config_file = os.path.normpath(config_file)
 
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0, parentdir)
+from variableFile import dictionary
 
 class configfileio: 
     
@@ -344,16 +349,16 @@ class configfileio:
             pass
 		
     def get_parameters(self,request):
-	#print "REQ", request
+	print "REQ", request
 	try:    
             partialdict = {}
 	    with open(config_file)as f:
 		for line in f:
-		    param,value = line.strip().split('=', 1) 
+		    param,value = line.strip().split('@', 1) 
 		    if request in param:
 			#print "PARAM",param
 			fun,query = param.split('_',1)
-			#print "FUN & Query",fun, query
+			print "FUN & Query",fun, query
 			partialdict[param] = value
 	    #print "Dictionary: ",dictionary
 	    #for item in dictionary:
@@ -390,8 +395,8 @@ class configfileio:
             newdict = dict(fulldict,**savedict)
             with open(config_file,'w') as f:      
                 for item in newdict:
-                    printer = item+'='+ (str(newdict[item])) +'\n'
-                    #print "Item to save: ", item
+                    printer = item+'@'+ (str(newdict[item])) +'\n'
+                    print "Item to save: ", item
 		    dictionary[item]=newdict[item]
                     f.write(printer)
         except:
