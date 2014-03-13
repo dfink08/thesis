@@ -3,8 +3,8 @@
 #	It writes this dictionary to a text file called configDict.txt
 # Uses python 3.3.3
 
-import sys
-import os
+import sys, os, inspect
+
 import pynetlinux
 import fcntl
 
@@ -12,7 +12,7 @@ import fcntl
 base_dir = os.path.dirname(__file__) or '.'
 lib_dir = os.path.join(base_dir, '../lib')
 sys.path.insert(0, lib_dir)
-
+print base_dir
 import string,time, logging, socket, struct, subprocess
 from cgi import parse_header
 from os import curdir, sep
@@ -26,7 +26,10 @@ from configfileio import configfileio
 
 import cProfile
 
-from inputFinder import responses
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0, parentdir)
+from variableFile import responses
 
 
 PYNETIFCONF = pynetlinux.ifconfig.Interface
@@ -72,12 +75,21 @@ class MyHandler(BaseHTTPRequestHandler):
         self.log_message("1-%s", self.requestline)
         #print 'Request: '+ self.requestline
         try:
-	    proc = subprocess.Popen(["file",req.path],stdout=subprocess.PIPE)
-	    output = proc.stdout.read()
+	    print "request path: ",req.path
+	    if req.path=="/" or req.path=="":
+	      proc = subprocess.Popen(["file",req.path],stdout=subprocess.PIPE)
+	      output = proc.stdout.read()
+	    else: 
+	      proc = subprocess.Popen(["file",req.path[1:]],stdout=subprocess.PIPE)
+	      output = proc.stdout.read()
+	    print "Output", output
+	    #allHeaders = responses[req.path].getheaders()
+	    
             #default page
             if req.path=="/" or req.path=="":
-		print "Curdir: ",curdir + "/user/web"+sep + 'home.html'
-                f = open(curdir + "/user/web"+sep + 'home.html')  
+		f = open(curdir + sep + 'index.html')  
+		#print "Curdir: ",curdir + "/user/web"+sep + 'home.html'
+                #f = open(curdir + "/user/web"+sep + 'home.html')  
                 fileText = f.read()
                 template = Template(fileText)
                 #print "Template: ", fileText
@@ -86,18 +98,23 @@ class MyHandler(BaseHTTPRequestHandler):
                 pophtml = fileText
 
                 #self.wfile.write('HTTP/1.1 302 Redirect\r\nServer: GoAhead-Webs\r\nDate: THU JAN 01 00:01:04 1970\r\nConnection: Close\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nContent-type: text/html; charset=utf-8\r\nLocation: http://127.0.0.1/index.html\r\n\r\n'+ pophtml)
-                allHeaders = responses[req.path].getheaders()
-                headerString = ""
-                for header in allHeaders:
-		  headerString = headerString+header[0]+':'+header[1]+'\r\n'
+                
+                #headerString = ""
+		#for header in allHeaders:
+		#  headerString = headerString+header[0]+':'+header[1]+'\r\n'
+		    
+		#allHeaders = responses[req.path].getheaders()
+                #headerString = ""
+                #for header in allHeaders:
+		#  headerString = headerString+header[0]+':'+header[1]+'\r\n'
 		  
-		toWrite = ("HTTP/1.0" if responses[req.path].version == 10 else "HTTP/1.1")+" "
-		toWrite += str(responses[req.path].status)+" "
-		toWrite += str(responses[req.path].reason)+'\r\n'
-		toWrite += headerString+'\r\n'
-		toWrite += pophtml
-                print toWrite
-		self.wfile.write(toWrite)
+		#toWrite = ("HTTP/1.0" if responses[req.path].version == 10 else "HTTP/1.1")+" "
+		#toWrite += str(responses[req.path].status)+" "
+		#toWrite += str(responses[req.path].reason)+'\r\n'
+		#toWrite += headerString+'\r\n'
+		#toWrite += pophtml
+                #print toWrite
+		self.wfile.write(responses[req.path]+pophtml)
                 self.close_connection = 1   #because http 1.1, not closed automatically       
 
                 f.close()
@@ -114,19 +131,19 @@ class MyHandler(BaseHTTPRequestHandler):
 	    #if self.path.endswith(".html") or self.path.endswith(".asp"):
 	    if ("HTML" in output):
 		f = open(curdir + sep + self.path)               
-
+	        print self.path
 		#get the .html template that we will populate with the data
 		template = Template(f.read())
-		if ("main"  or "index") in req.path:
+		if ("main" or "index") in req.path:
 			main_index = configio.get_all_parameters() 
 			print "Request from get_param: ",main_index
-			pophtml= template.substitute(main_index)
+			pophtml= template.safe_substitute(main_index)
 			  
 		
 		elif not (("main" or "index") in req.path):
 			request = configio.get_parameters(req.path[1:-5]) 
 			print "Request from get_param: ",request
-			pophtml= template.substitute(dict(global_template,**request))
+			pophtml= template.safe_substitute(dict(global_template,**request))
 			print "pophtml: ", pophtml
 	    
 		else:
@@ -134,23 +151,24 @@ class MyHandler(BaseHTTPRequestHandler):
 		  return
 		
 		#self.wfile.write('HTTP/1.1 200 OK\r\nContent-type: text/html\r\n\r\n'+ pophtml)
-		allHeaders = responses[req.path].getheaders()
-		headerString = ""
-		for header in allHeaders:
-		  headerString = headerString+header[0]+':'+header[1]+'\r\n'
+		
+		
+                #headerString = ""
+		#for header in allHeaders:
+		#  headerString = headerString+header[0]+':'+header[1]+'\r\n'
 		    
-		allHeaders = responses[req.path].getheaders()
-                headerString = ""
-                for header in allHeaders:
-		  headerString = headerString+header[0]+':'+header[1]+'\r\n'
+		#allHeaders = responses[req.path].getheaders()
+                #headerString = ""
+                #for header in allHeaders:
+		#  headerString = headerString+header[0]+':'+header[1]+'\r\n'
 		  
-		toWrite = ("HTTP/1.0" if responses[req.path].version == 10 else "HTTP/1.1")+" "
-		toWrite += str(responses[req.path].status)+" "
-		toWrite += str(responses[req.path].reason)+'\r\n'
-		toWrite += headerString+'\r\n'
-		toWrite += pophtml
-                print toWrite
-		self.wfile.write(toWrite)
+		#toWrite = ("HTTP/1.0" if responses[req.path].version == 10 else "HTTP/1.1")+" "
+		#toWrite += str(responses[req.path].status)+" "
+		#toWrite += str(responses[req.path].reason)+'\r\n'
+		#toWrite += headerString+'\r\n'
+		#toWrite += pophtml
+                #print toWrite
+		self.wfile.write(responses[req.path]+pophtml)
 		
 		self.close_connection = 1
 		print "Closes the connection in the first part"
@@ -166,12 +184,12 @@ class MyHandler(BaseHTTPRequestHandler):
 		if ("main" or "index" or "home") in req.path:
 			main_index = configio.get_all_parameters() 
 			print "Request from get_param: ",main_index
-			pophtml= template.substitute(main_index)
+			pophtml= template.safe_substitute(main_index)
 		
 		elif not (("main" or "index" or "home") in req.path):
 			request = configio.get_parameters(req.path[1:-5]) 
 			print "Request from get_param: ",request
-			pophtml= template.substitute(dict(global_template,**request))
+			pophtml= template.safe_substitute(dict(global_template,**request))
 			print "pophtml: ", pophtml
 		
 	    
@@ -180,23 +198,22 @@ class MyHandler(BaseHTTPRequestHandler):
 		  return
 		
 		#self.wfile.write('HTTP/1.1 302 Redirect\r\nServer: GoAhead-Webs\r\nDate: THU JAN 01 00:01:04 1970\r\nConnection: Close\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nContent-type: text/html; charset=utf-8\r\nLocation: http://127.0.0.1/index.html\r\n\r\n'+ pophtml)
-		allHeaders = responses[req.path].getheaders()
-		headerString = ""
-		for header in allHeaders:
-		  headerString = headerString+header[0]+':'+header[1]+'\r\n'
+		#headerString = ""
+		#for header in allHeaders:
+		#  headerString = headerString+header[0]+':'+header[1]+'\r\n'
 		    
-		allHeaders = responses[req.path].getheaders()
-                headerString = ""
-                for header in allHeaders:
-		  headerString = headerString+header[0]+':'+header[1]+'\r\n'
+		#allHeaders = responses[req.path].getheaders()
+                #headerString = ""
+                #for header in allHeaders:
+		#  headerString = headerString+header[0]+':'+header[1]+'\r\n'
 		  
-		toWrite = ("HTTP/1.0" if responses[req.path].version == 10 else "HTTP/1.1")+" "
-		toWrite += str(responses[req.path].status)+" "
-		toWrite += str(responses[req.path].reason)+'\r\n'
-		toWrite += headerString+'\r\n'
-		toWrite += pophtml
-                print toWrite
-		self.wfile.write(toWrite)
+		#toWrite = ("HTTP/1.0" if responses[req.path].version == 10 else "HTTP/1.1")+" "
+		#toWrite += str(responses[req.path].status)+" "
+		#toWrite += str(responses[req.path].reason)+'\r\n'
+		#toWrite += headerString+'\r\n'
+		#toWrite += pophtml
+                #print toWrite
+		self.wfile.write(responses[req.path]+pophtml)
 		self.close_connection = 1
 		print "Closes the connection in the first part"
 		f.close()	
