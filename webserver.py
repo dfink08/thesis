@@ -12,7 +12,7 @@ import fcntl
 base_dir = os.path.dirname(__file__) or '.'
 lib_dir = os.path.join(base_dir, '../lib')
 sys.path.insert(0, lib_dir)
-print base_dir
+
 import string,time, logging, socket, struct, subprocess
 from cgi import parse_header
 from os import curdir, sep
@@ -73,53 +73,34 @@ class MyHandler(BaseHTTPRequestHandler):
 		
 	req = urlparse(self.path)
         self.log_message("1-%s", self.requestline)
-        #print 'Request: '+ self.requestline
+        
         try:
-	    print "request path: ",req.path
+	    
 	    if req.path=="/" or req.path=="":
 	      proc = subprocess.Popen(["file",req.path],stdout=subprocess.PIPE)
 	      output = proc.stdout.read()
 	    else: 
 	      proc = subprocess.Popen(["file",req.path[1:]],stdout=subprocess.PIPE)
 	      output = proc.stdout.read()
-	    print "Output", output
-	    #allHeaders = responses[req.path].getheaders()
-	    
+   
             #default page
             if req.path=="/" or req.path=="":
 		f = open(curdir + sep + 'index.html')  
-		#print "Curdir: ",curdir + "/user/web"+sep + 'home.html'
+		
                 #f = open(curdir + "/user/web"+sep + 'home.html')  
                 fileText = f.read()
                 template = Template(fileText)
-                #print "Template: ", fileText
+                
                 main_index = configio.get_all_parameters() 
                 #pophtml= template.substitute(main_index) 
                 pophtml = fileText
 
-                #self.wfile.write('HTTP/1.1 302 Redirect\r\nServer: GoAhead-Webs\r\nDate: THU JAN 01 00:01:04 1970\r\nConnection: Close\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nContent-type: text/html; charset=utf-8\r\nLocation: http://127.0.0.1/index.html\r\n\r\n'+ pophtml)
-                
-                #headerString = ""
-		#for header in allHeaders:
-		#  headerString = headerString+header[0]+':'+header[1]+'\r\n'
-		    
-		#allHeaders = responses[req.path].getheaders()
-                #headerString = ""
-                #for header in allHeaders:
-		#  headerString = headerString+header[0]+':'+header[1]+'\r\n'
-		  
-		#toWrite = ("HTTP/1.0" if responses[req.path].version == 10 else "HTTP/1.1")+" "
-		#toWrite += str(responses[req.path].status)+" "
-		#toWrite += str(responses[req.path].reason)+'\r\n'
-		#toWrite += headerString+'\r\n'
-		#toWrite += pophtml
-                #print toWrite
-		self.wfile.write(responses[req.path]+pophtml)
+                self.wfile.write(responses[req.path]+pophtml)
                 self.close_connection = 1   #because http 1.1, not closed automatically       
 
                 f.close()
             
-			#favicon 
+	    #favicon 
 	    if req.path==("/favicon.ico"):
 		f = open(curdir + sep + self.path,'rb')
 		self.close_connection = 1   #because http 1.1, not closed automatically           
@@ -150,24 +131,6 @@ class MyHandler(BaseHTTPRequestHandler):
 		  print "The first part is broken"
 		  return
 		
-		#self.wfile.write('HTTP/1.1 200 OK\r\nContent-type: text/html\r\n\r\n'+ pophtml)
-		
-		
-                #headerString = ""
-		#for header in allHeaders:
-		#  headerString = headerString+header[0]+':'+header[1]+'\r\n'
-		    
-		#allHeaders = responses[req.path].getheaders()
-                #headerString = ""
-                #for header in allHeaders:
-		#  headerString = headerString+header[0]+':'+header[1]+'\r\n'
-		  
-		#toWrite = ("HTTP/1.0" if responses[req.path].version == 10 else "HTTP/1.1")+" "
-		#toWrite += str(responses[req.path].status)+" "
-		#toWrite += str(responses[req.path].reason)+'\r\n'
-		#toWrite += headerString+'\r\n'
-		#toWrite += pophtml
-                #print toWrite
 		self.wfile.write(responses[req.path]+pophtml)
 		
 		self.close_connection = 1
@@ -183,45 +146,25 @@ class MyHandler(BaseHTTPRequestHandler):
 		template = Template(f.read())
 		if ("main" or "index" or "home") in req.path:
 			main_index = configio.get_all_parameters() 
-			print "Request from get_param: ",main_index
 			pophtml= template.safe_substitute(main_index)
 		
 		elif not (("main" or "index" or "home") in req.path):
 			request = configio.get_parameters(req.path[1:-5]) 
-			print "Request from get_param: ",request
 			pophtml= template.safe_substitute(dict(global_template,**request))
-			print "pophtml: ", pophtml
-		
+				
 	    
 		else:
 		  print "The first part is broken"
 		  return
 		
-		#self.wfile.write('HTTP/1.1 302 Redirect\r\nServer: GoAhead-Webs\r\nDate: THU JAN 01 00:01:04 1970\r\nConnection: Close\r\nPragma: no-cache\r\nCache-Control: no-cache\r\nContent-type: text/html; charset=utf-8\r\nLocation: http://127.0.0.1/index.html\r\n\r\n'+ pophtml)
-		#headerString = ""
-		#for header in allHeaders:
-		#  headerString = headerString+header[0]+':'+header[1]+'\r\n'
-		    
-		#allHeaders = responses[req.path].getheaders()
-                #headerString = ""
-                #for header in allHeaders:
-		#  headerString = headerString+header[0]+':'+header[1]+'\r\n'
-		  
-		#toWrite = ("HTTP/1.0" if responses[req.path].version == 10 else "HTTP/1.1")+" "
-		#toWrite += str(responses[req.path].status)+" "
-		#toWrite += str(responses[req.path].reason)+'\r\n'
-		#toWrite += headerString+'\r\n'
-		#toWrite += pophtml
-                #print toWrite
 		self.wfile.write(responses[req.path]+pophtml)
 		self.close_connection = 1
-		print "Closes the connection in the first part"
 		f.close()	
 	    
 		return
 		
 	    if req.query!= "":   
-		print "Stops at req.query check"
+		
 		#if global_params['submit']=='no':
 		    #closeAndSendHeader(self)
 
@@ -232,7 +175,7 @@ class MyHandler(BaseHTTPRequestHandler):
 		    #f.close() 
 		
 		if req.path.endswith('.html'):
-		    #print "The query ends in html"
+		    
 		    request, type = req.path.split('.',1)
 		    requestDict = configio.get_parameters(request)
 		    newDictionary = {}
@@ -246,8 +189,7 @@ class MyHandler(BaseHTTPRequestHandler):
 				
 		    for item in dict(parse_qsl(req.query)):
                         requestDict[request[1:]+'_'+item]= (dict(parse_qsl(req.query))[item])                            
-                        #print "Key: ",request[1:]+'_'+item
-                        #print "Value to save: ",(dict(parse_qsl(req.query))[item]) 
+                        
 		    configio.save_parameters(requestDict)
 		    
 		    #closeAndSendHeader(self)
@@ -263,16 +205,14 @@ class MyHandler(BaseHTTPRequestHandler):
 		    #f.close() 
 		    
 		else:
-		    #print "I supposes it just passes"
-                    pass
+		    pass
                     #this is commented out because the actual PLC sends no 404 replys, it just times out!
                     #print'file not found 2'
                     #self.send_error(404,'File Not Found: %s' % self.path)
                     #print'sleep 60 b'
                     #time.sleep(60)	#sleep emulates the PLC DoS upon bad URL
                     
-                #print "Then it returns"
-		return
+                return
 	    
 	    else:
 	      pass
