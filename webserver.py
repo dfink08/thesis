@@ -16,15 +16,22 @@ sys.path.insert(0, lib_dir)
 import string,time, logging, socket, struct, subprocess
 from cgi import parse_header
 from os import curdir, sep
+import threading
+import SocketServer
+
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
+from SocketServer import ThreadingMixIn, ForkingMixIn
+from CGIHTTPServer import CGIHTTPRequestHandler
+
 import urlparse
 from urlparse import urlparse, parse_qs, parse_qsl
 from string import Template,upper
 import re
 import urllib 
 from configfileio import configfileio
-
+from mimetypes import types_map
 import cProfile
+
 
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
@@ -52,6 +59,7 @@ syslog.syslog(syslog.LOG_ALERT, "ID(%s) web:Webserver Started.  Listening on Por
 
 
 class MyHandler(BaseHTTPRequestHandler):
+        
 	# Override.  Disable logging DNS lookups to speed up response
     def address_string(self):
         return str(self.client_address[0])
@@ -99,49 +107,53 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.close_connection = 1   #because http 1.1, not closed automatically       
 
                 f.close()
-            
+            	return
+
 	    #favicon 
-	    if req.path==("/favicon.ico"):
-		f = open(curdir + sep + self.path,'rb')
-		self.close_connection = 1   #because http 1.1, not closed automatically           
-		self.send_response(200)
-		self.end_headers()
-		self.wfile.write(f.read())
-		f.close()
+##	    if req.path==("/favicon.ico"):
+##		f = open(curdir + sep + self.path,'rb')
+##		self.close_connection = 1   #because http 1.1, not closed automatically           
+##		self.send_response(200)
+##		self.end_headers()
+##		self.wfile.write(f.read())
+##		f.close()
+##		return
 			
-	    #if self.path.endswith(".html") or self.path.endswith(".asp"):
-	    if ("HTML" in output):
-		f = open(curdir + sep + self.path)               
-	        print self.path
+	    #if self.path.endswith(".html") :
+	    elif ("HTML" in output):
+		print "Self.path ", self.path
+
+		f = open(curdir + sep + self.path)
+	        #print self.path
 		#get the .html template that we will populate with the data
 		template = Template(f.read())
 		if ("main" or "index") in req.path:
 			main_index = configio.get_all_parameters() 
-			print "Request from get_param: ",main_index
+			print "The requested page (is index): ", req.path
 			pophtml= template.safe_substitute(main_index)
 			  
 		
 		elif not (("main" or "index") in req.path):
 			request = configio.get_parameters(req.path[1:-5]) 
-			print "Request from get_param: ",request
+			print "The requested page (not index): ", req.path
 			pophtml= template.safe_substitute(dict(global_template,**request))
-			print "pophtml: ", pophtml
+			
 	    
 		else:
 		  print "The first part is broken"
 		  return
-		
+		#print "The response: ", responses[req.path]
 		self.wfile.write(responses[req.path]+pophtml)
 		
 		self.close_connection = 1
-		print "Closes the connection in the first part"
 		f.close()	
 	    
 		return
+	    
 		
-	    if ("SGML" in output):
+	    elif ("SGML" in output):
 		f = open(curdir + sep + self.path)               
-
+                print "Self.Path: ", self.path
 		#get the .html template that we will populate with the data
 		template = Template(f.read())
 		if ("main" or "index" or "home") in req.path:
@@ -156,71 +168,99 @@ class MyHandler(BaseHTTPRequestHandler):
 		else:
 		  print "The first part is broken"
 		  return
-		
+		#print "req .path: ", req.path
+		#print "The response: ", responses[req.path]+pophtml
 		self.wfile.write(responses[req.path]+pophtml)
 		self.close_connection = 1
 		f.close()	
 	    
 		return
 		
-	    if req.query!= "":   
-		
+	    elif req.query!= "":   
+		print "There is a query"
 		#if global_params['submit']=='no':
-		    #closeAndSendHeader(self)
-
-		    #f = open(curdir + sep +'/complete.html')
-		    #template = Template(f.read())
-		    #pophtml = template.substitute({'title':'http://IP'+req.path+ req.query,'message':'Currently in Read-Only Mode.'})
-		    #self.wfile.write(pophtml)
-		    #f.close() 
+##                    closeAndSendHeader(self)
+##
+##                    f = open(curdir + sep +'/complete.html')
+##                    template = Template(f.read())
+##                    pophtml = template.substitute({'title':'http://IP'+req.path+ req.query,'message':'Currently in Read-Only Mode.'})
+##                    self.wfile.write(pophtml)
+##                    f.close() 
 		
 		if req.path.endswith('.html'):
-		    
-		    request, type = req.path.split('.',1)
-		    requestDict = configio.get_parameters(request)
-		    newDictionary = {}
-		    #print "It makes the dict"
-		    #print "request: ",request
-		    # for input in parse_qsl(req.query):
-			    # print "It gets to the parsing loop"
-			    # requestDict[str(req.path+input[0])] = input[1]
-			    # print str(req.path+input[0])
-			    # print input[1]
-				
-		    for item in dict(parse_qsl(req.query)):
-                        requestDict[request[1:]+'_'+item]= (dict(parse_qsl(req.query))[item])                            
-                        
-		    configio.save_parameters(requestDict)
-		    
-		    #closeAndSendHeader(self)
-		    self.close_connection = 1   #because http 1.1, not closed automatically                   
+                    print "HTML query"
+                    self.close_connection = 1   #because http 1.1, not closed automatically                   
 		    self.send_response(200)
 		    self.send_header('Content-type',	'text/html')
 		    self.end_headers()
+
+                    f = open(curdir + sep +'/complete.html')
+                    template = Template(f.read())
+                    pophtml = template.substitute({'title':'http://IP'+req.path+ req.query,'message':'Currently in Read-Only Mode.'})
+                    self.wfile.write(pophtml)
+                    f.close()
+		    
+##		    request, type = req.path.split('.',1)
+##		    requestDict = configio.get_parameters(request)
+##		    newDictionary = {}
+##		    #print "It makes the dict"
+##		    #print "request: ",request
+##		    # for input in parse_qsl(req.query):
+##			    # print "It gets to the parsing loop"
+##			    # requestDict[str(req.path+input[0])] = input[1]
+##			    # print str(req.path+input[0])
+##			    # print input[1]
+##				
+##		    for item in dict(parse_qsl(req.query)):
+##                        requestDict[request[1:]+'_'+item]= (dict(parse_qsl(req.query))[item])                            
+##                        
+##		    configio.save_parameters(requestDict)
+##		    
+##		    #closeAndSendHeader(self)
+##		    self.close_connection = 1   #because http 1.1, not closed automatically                   
+##		    self.send_response(200)
+##		    self.send_header('Content-type',	'text/html')
+##		    self.end_headers()
 		    
 		    #f = open(curdir + sep +'/complete.html')
 		    #template = Template(f.read())
 		    # pophtml = template.substitute({'title':'Set Module Description','message':'Module Description setup complete.'})
 		    #self.wfile.write(pophtml)   
 		    #f.close() 
-		    
+		
 		else:
 		    pass
                     #this is commented out because the actual PLC sends no 404 replys, it just times out!
-                    #print'file not found 2'
+                    #print "file not found 2: ", req.path
                     #self.send_error(404,'File Not Found: %s' % self.path)
                     #print'sleep 60 b'
                     #time.sleep(60)	#sleep emulates the PLC DoS upon bad URL
                     
                 return
-	    
+
 	    else:
-	      pass
+                
+                fname,ext = os.path.splitext(self.path)
+                print "File name: ", fname
+                print "Extension: ", ext
+                with open(curdir + sep + self.path) as f:
+                    fileText = f.read()
+              
+                    pophtml = fileText
+                    self.wfile.write(responses[req.path]+pophtml)
+                    self.close_connection = 1
+                    f.close()
+                return
+
+	    #else:
+	      #pass
 	    
-	except:
-	  print "Exception Occured!"
+	except IOError:
+            self.send_error(404)
+	except KeyError:
+	  print "Key Error!"
 	  raise
-				
+	
     def do_POST(self):
 	#print "It goes into do_POST"
 	global rootnode
@@ -236,14 +276,19 @@ class MyHandler(BaseHTTPRequestHandler):
 	    self.wfile.write("<HTML>POST OK.<BR><BR>");
 	    self.wfile.write(upfilecontent[0]);
 	    
-	except :
+	except KeyError:
+            print "That's not a file"
 	    raise
-			
-def closeAndSendHeader(server):
-	server.close_connection = 1   #because http 1.1, not closed automatically                   
-	server.send_response(200)
-	server.send_header('Content-type',	'text/html')
-	server.end_headers()
+	except IOError:
+            print "IO Error"
+	    raise
+
+class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
+    pass
+
+##class ForkingHTTPServer(ForkingMixIn, HTTPServer):
+##    pass
+
 	
 def getHwAddr(ifname):
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -277,11 +322,19 @@ def main():
     try:
         run_ini()
         server = HTTPServer(('', 80), MyHandler)
+        #server = ThreadedHTTPServer(('', 80), MyHandler)
+        #server = ForkingHTTPServer(('localhost', 80), MyHandler)
+        
+##        server_thread = threading.Thread(target=server.serve_forever)
+##        # Exit the server thread when the main thread terminates
+##        server_thread.setDaemon(True)
+##        server_thread.start()
+##        print("Server loop running in thread:", server_thread.name)
         print '+++++HTTP Server Started.  Listening on Port 80.'
-      
+        server.serve_forever()
 		# self.log_message("Webserver Started.  Listening on Port 80...")
 
-        server.serve_forever()
+        
 		
     except KeyboardInterrupt:
         print '^C received, shutting down server'
